@@ -6,19 +6,19 @@ IndraCyber Institute-ийн сургалтын үйл ажиллагаа, мэр
 
 ## 1.--Сургуулийн мэдээлэл
 IndraCyber Institute нь дараах мэргэжлүүдээр сургалт явуулна.
-## 1.💻 Software Engineering
+## 1. Software Engineering
 3 анги
 Веб хөгжүүлэлт
 Mobile хөгжүүлэлт
 Database & Backend
 
-## 2.🎨 Graphic Design
+## 2. Graphic Design
 1 анги
 Photoshop
 Illustrator
 UI/UX Design
 
-## 3.📈 Digital Marketing
+## 3. Digital Marketing
 3 анги
 Social Media Marketing
 SEO
@@ -69,7 +69,7 @@ FR-09	Сургалтын төлөвлөгөө харах
 
 ## Admission Module
 ID	Requirement
-FR-10	Элсэлтийн мэдээлэл харах,
+FR-10	Элсэлтийн мэдээлэл харах, 
 FR-11	Онлайн бүртгэл хийх,
 FR-12	Бүртгэлийн мэдээлэл хадгалах,
 FR-13	Админ бүртгэлүүдийг харах,
@@ -115,14 +115,6 @@ Role Based Authorization
 Хуудас 3 секундээс бага хугацаанд ачаалагдах
 Availability
 24/7 ажиллагаатай байх
-
---Responsive Design
-Desktop
-Mobile
-
---Browser Support
-Chrome
-Safari
 
 ## 5. Database Tables
 --users
