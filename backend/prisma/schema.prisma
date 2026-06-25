@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================
+// ENUMS
+// =====================
+
+enum RoleName {
+  SUPER_ADMIN
+  OWNER
+  DIRECTOR
+  ACADEMIC_OFFICE
+  MODERATOR
+  TEACHER
+  STUDENT
+}
+
+enum AdmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+// =====================
+// USER & ROLE
+// =====================
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  phone       String?
+  avatarUrl   String?
+  isActive    Boolean  @default(true)
+  roleId      Int
+  role        Role     @relation(fields: [roleId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teacherClasses   ClassGroup[]      @relation("TeacherClasses")
+  enrollments      Enrollment[]
+  attendancesTaken Attendance[]      @relation("AttendanceTaker")
+  attendances      Attendance[]      @relation("StudentAttendance")
+  gradesGiven      Grade[]           @relation("GradeGiver")
+  gradesReceived   Grade[]           @relation("StudentGrade")
+  materials        Material[]
+  newsPosts        News[]
+  admissionReviews AdmissionRequest[] @relation("ReviewedBy")
+  contactReplies   ContactMessage[]  @relation("RepliedBy")
+  logs             SystemLog[]
+
+  @@map("users")
+}
+
+model Role {
+  id    Int      @id @default(autoincrement())
+  name  RoleName @unique
+  users User[]
+
+  @@map("roles")
+}
+
+// =====================
+// PROGRAM & CLASS
+// =====================
+
+model Program {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique 
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  classes     ClassGroup[]
+  admissions  AdmissionRequest[]
+
+  @@map("programs")
+}
+
+model ClassGroup {
+  id         Int       @id @default(autoincrement())
+  name       String
+  programId  Int
+  program    Program   @relation(fields: [programId], references: [id])
+  teacherId  Int?
+  teacher    User?     @relation("TeacherClasses", fields: [teacherId], references: [id])
+  startDate  DateTime?
+  endDate    DateTime?
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  schedules   Schedule[]
+  enrollments Enrollment[]
+  attendances Attendance[]
+  grades      Grade[]
+  materials   Material[]
+
+  @@map("class_groups")
+}
+
+model Schedule {
+  id           Int        @id @default(autoincrement())
+  classGroupId Int
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  dayOfWeek    Int
+  startTime    String
+  endTime      String
+  room         String?
+
+  @@map("schedules")
+}
+
+// =====================
+// ENROLLMENT
+// =====================
+
+model Enrollment {
+  id           Int        @id @default(autoincrement())
+  studentId    Int
+  student      User       @relation(fields: [studentId], references: [id])
+  classGroupId Int
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  enrolledAt   DateTime   @default(now())
+
+  @@unique([studentId, classGroupId])
+  @@map("enrollments")
+}
+
+// =====================
+// ATTENDANCE & GRADE
+// =====================
+
+model Attendance {
+  id           Int               @id @default(autoincrement())
+  classGroupId Int
+  classGroup   ClassGroup        @relation(fields: [classGroupId], references: [id])
+  studentId    Int
+  student      User              @relation("StudentAttendance", fields: [studentId], references: [id])
+  date         DateTime
+  status       AttendanceStatus  @default(PRESENT)
+  takenById    Int
+  takenBy      User              @relation("AttendanceTaker", fields: [takenById], references: [id])
+  createdAt    DateTime          @default(now())
+
+  @@unique([classGroupId, studentId, date])
+  @@map("attendances")
+}
+
+model Grade {
+  id           Int        @id @default(autoincrement())
+  classGroupId Int
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  studentId    Int
+  student      User       @relation("StudentGrade", fields: [studentId], references: [id])
+  givenById    Int
+  givenBy      User       @relation("GradeGiver", fields: [givenById], references: [id])
+  title        String
+  score        Float
+  maxScore     Float      @default(100)
+  comment      String?    @db.Text
+  createdAt    DateTime   @default(now())
+
+  @@map("grades")
+}
+
+// =====================
+// MATERIALS
+// =====================
+
+model Material {
+  id           Int        @id @default(autoincrement())
+  classGroupId Int
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  uploadedById Int
+  uploadedBy   User       @relation(fields: [uploadedById], references: [id])
+  title        String
+  fileUrl      String
+  fileType     String?
+  createdAt    DateTime   @default(now())
+
+  @@map("materials")
+}
+
+// =====================
+// NEWS / ANNOUNCEMENT
+// =====================
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text
+  imageUrl    String?
+  isPublished Boolean  @default(false)
+  authorId    Int
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("news")
+}
+
+// =====================
+// ADMISSION
+// =====================
+
+model AdmissionRequest {
+  id          Int             @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  programId   Int
+  program     Program         @relation(fields: [programId], references: [id])
+  message     String?         @db.Text
+  status      AdmissionStatus @default(PENDING)
+  reviewedById Int?
+  reviewedBy   User?          @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("admission_requests")
+}
+
+// =====================
+// CONTACT / FEEDBACK
+// =====================
+
+model ContactMessage {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String
+  subject    String?
+  message    String   @db.Text
+  isReplied  Boolean  @default(false)
+  repliedById Int?
+  repliedBy   User?   @relation("RepliedBy", fields: [repliedById], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@map("contact_messages")
+}
+
+// =====================
+// SYSTEM LOG
+// =====================
+
+model SystemLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  details   String?  @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("system_logs")
+}
