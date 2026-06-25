@@ -1,3 +1,4 @@
+import "dotenv/config";
 import pkg from "@prisma/client";
 const { PrismaClient, RoleName } = pkg;
 import bcrypt from "bcrypt";
@@ -23,6 +24,10 @@ async function main() {
   const superAdminRole = await prisma.role.findUnique({
     where: { name: "SUPER_ADMIN" },
   });
+
+  if (!superAdminRole) {
+    throw new Error("SUPER_ADMIN role was not created during seeding.");
+  }
 
   // 3. Super Admin user үүсгэх
   const hashedPassword = await bcrypt.hash("Admin@123", 10);
