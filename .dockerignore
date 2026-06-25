@@ -1,0 +1,9 @@
+.git
+backend/node_modules
+backend/dist
+Indra/node_modules
+Indra/.cache
+.agents
+.codex
+npm-debug.log
+*.log
