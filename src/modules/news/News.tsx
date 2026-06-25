@@ -22,7 +22,7 @@ const News: React.FC<NewsProps> = ({
 }) => {
   return (
     <section id="news" className="py-24 px-4 sm:px-6 lg:px-12 bg-[#05070F]/50">
-      <div className="max-w-8xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Latest News</h2>
           <p className="text-[#9CA3AF] text-lg">Catch up with our latest achievements and milestones</p>

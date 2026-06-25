@@ -18,7 +18,7 @@ const Programs: React.FC<ProgramsProps> = ({ lessons, setSelectedLesson }) => {
 
   return (
     <section id="programs" className="py-24 px-4 sm:px-6 lg:px-12">
-      <div className="max-w-8xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Elite Programs</h2>
           <p className="text-[#9CA3AF] text-lg">Military-grade syllabus crafted for the cyber warriors of tomorrow</p>
