@@ -1,7 +1,8 @@
 export interface Material {
   id: number;
   title: string;
-  fileUrl: string;
+  fileUrl?: string | null;
+  videoUrl?: string | null;
   fileType?: string | null;
   classGroupId: number;
   uploadedById: number;

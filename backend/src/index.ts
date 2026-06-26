@@ -3,7 +3,11 @@ import express, { type NextFunction, type Request, type Response } from "express
 import fs from "node:fs";
 import path from "node:path";
 import prisma from "./config/db.js";
+import admissionRoutes from "./routes/admission.routes.js";
+import announcementRoutes from "./routes/announcement.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 import contactRoutes from "./contact/contact.routes.js";
+import newsRoutes from "./routes/news.routes.js";
 import { ensureUploadDir, uploadDir } from "./middlewares/upload.middleware.js";
 import { materialRoutes } from "./routes/material.routes.js";
 import { programRoutes } from "./routes/program.routes.js";
@@ -35,7 +39,12 @@ app.get("/", (_req: Request, res: Response) => {
   res.status(200).send("Frontend build not found.");
 });
 
+app.use("/contacts", contactRoutes);
 app.use("/api/contacts", contactRoutes);
+app.use("/admissions", admissionRoutes);
+app.use("/news", newsRoutes);
+app.use("/announcements", announcementRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/teachers", teacherRoutes);
 app.use("/students", studentRoutes);
 app.use("/materials", materialRoutes);
