@@ -60,6 +60,7 @@ model User {
   gradesReceived   Grade[]           @relation("StudentGrade")
   materials        Material[]
   newsPosts        News[]
+  announcementPosts Announcement[]
   admissionReviews AdmissionRequest[] @relation("ReviewedBy")
   contactReplies   ContactMessage[]  @relation("RepliedBy")
   logs             SystemLog[]
@@ -191,7 +192,8 @@ model Material {
   uploadedById Int
   uploadedBy   User       @relation(fields: [uploadedById], references: [id])
   title        String
-  fileUrl      String
+  fileUrl      String?
+  videoUrl     String?
   fileType     String?
   createdAt    DateTime   @default(now())
 
@@ -214,6 +216,23 @@ model News {
   updatedAt   DateTime @updatedAt
 
   @@map("news")
+}
+
+// =====================
+// ANNOUNCEMENTS
+// =====================
+
+model Announcement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text
+  isPublished Boolean  @default(false)
+  authorId    Int
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("announcements")
 }
 
 // =====================

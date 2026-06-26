@@ -21,12 +21,39 @@ const parseId = (value: string | string[] | undefined) => {
   return id;
 };
 
+const contactInclude = {
+  repliedBy: {
+    select: { id: true, firstName: true, lastName: true, email: true },
+  },
+} as const;
+
+function parseBoolean(value: unknown) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  const normalized = String(value).toLowerCase();
+  if (normalized === "true") return true;
+  if (normalized === "false") return false;
+
+  throw new Error("Invalid boolean value.");
+}
+
 export const createContact = async (req: Request, res: Response) => {
   try {
     const { name, email, subject, message } = req.body;
 
     const contact = await prisma.contactMessage.create({
-      data: { name, email, subject, message },
+      data: {
+        name: String(name).trim(),
+        email: String(email).trim().toLowerCase(),
+        subject: subject === undefined || subject === null ? null : String(subject).trim() || null,
+        message: String(message).trim(),
+      },
     });
 
     return res.status(201).json({ success: true, data: contact });
@@ -40,11 +67,7 @@ export const getAllContacts = async (_req: Request, res: Response) => {
   try {
     const contacts = await prisma.contactMessage.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
-        repliedBy: {
-          select: { id: true, firstName: true, lastName: true },
-        },
-      },
+      include: contactInclude,
     });
 
     return res.status(200).json({ success: true, data: contacts });
@@ -64,11 +87,7 @@ export const getContactById = async (req: Request, res: Response) => {
 
     const contact = await prisma.contactMessage.findUnique({
       where: { id },
-      include: {
-        repliedBy: {
-          select: { id: true, firstName: true, lastName: true },
-        },
-      },
+      include: contactInclude,
     });
 
     if (!contact) {
@@ -102,10 +121,54 @@ export const markContactAsReplied = async (req: AuthRequest, res: Response) => {
         isReplied: true,
         repliedById,
       },
+      include: contactInclude,
     });
 
     return res.status(200).json({ success: true, data: contact });
   } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+export const updateContact = async (req: AuthRequest, res: Response) => {
+  try {
+    const id = parseId(req.params.id);
+
+    if (!id) {
+      return res.status(400).json({ success: false, message: "Invalid contact id." });
+    }
+
+    const data: Record<string, unknown> = {};
+
+    if (req.body.name !== undefined) data.name = String(req.body.name).trim();
+    if (req.body.email !== undefined) data.email = String(req.body.email).trim().toLowerCase();
+    if (req.body.subject !== undefined) {
+      data.subject =
+        req.body.subject === null ? null : String(req.body.subject).trim() || null;
+    }
+    if (req.body.message !== undefined) data.message = String(req.body.message).trim();
+
+    const isReplied = parseBoolean(req.body.isReplied);
+    if (isReplied !== undefined) {
+      data.isReplied = isReplied;
+      data.repliedById = isReplied ? req.user?.id ?? null : null;
+    }
+
+    const contact = await prisma.contactMessage.update({
+      where: { id },
+      data,
+      include: contactInclude,
+    });
+
+    return res.status(200).json({ success: true, data: contact });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Server error.";
+
+    if (message === "Invalid contact id." || message === "Invalid boolean value.") {
+      return res.status(400).json({ success: false, message });
+    }
+
     console.error(error);
     return res.status(500).json({ success: false, message: "Server error." });
   }
