@@ -6,5 +6,6 @@ import { ADMIN_ROLES } from "../constants/roles.js";
 export const logRoutes = Router();
 
 logRoutes.get("/", authMiddleware, authorize(...ADMIN_ROLES), logController.list);
+logRoutes.get("/stats", authMiddleware, authorize(...ADMIN_ROLES), logController.stats);
 
 export default logRoutes;

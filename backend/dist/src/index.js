@@ -12,6 +12,7 @@ import contactRoutes from "./contact/contact.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import gradeRoutes from "./routes/grade.routes.js";
 import logRoutes from "./routes/log.routes.js";
+import monitoringRoutes from "./routes/monitoring.routes.js";
 import newsRoutes from "./routes/news.routes.js";
 import { ensureUploadDir, uploadDir } from "./middlewares/upload.middleware.js";
 import { materialRoutes } from "./routes/material.routes.js";
@@ -62,6 +63,8 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/logs", logRoutes);
 app.use("/api/logs", logRoutes);
+app.use("/monitoring", monitoringRoutes);
+app.use("/api/monitoring", monitoringRoutes);
 app.use("/backups", backupRoutes);
 app.use("/api/backups", backupRoutes);
 app.use((_req, res) => {

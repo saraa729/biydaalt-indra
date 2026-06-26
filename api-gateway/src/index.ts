@@ -116,6 +116,14 @@ app.use(
 );
 
 app.use(
+  "/api/monitoring",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
   "/api/backups",
   createProxyMiddleware({
     target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
