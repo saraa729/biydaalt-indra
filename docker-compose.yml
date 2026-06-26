@@ -3,10 +3,10 @@ services:
     image: mariadb:11
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: indra_biedaalt
-      MYSQL_USER: prisma
-      MYSQL_PASSWORD: prisma123
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
@@ -18,23 +18,143 @@ services:
       retries: 10
       start_period: 30s
 
-  backend:
+  api-gateway:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: api-gateway/Dockerfile
     restart: always
     ports:
-      - "3000:3000"
+      - "${PORT}:${PORT}"
     environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: "mysql://prisma:prisma123@db:3306/indra_biedaalt"
-      JWT_SECRET: "change-me-in-production"
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      STUDENT_SERVICE_URL: ${STUDENT_SERVICE_URL}
+      TEACHER_SERVICE_URL: ${TEACHER_SERVICE_URL}
+      PROGRAM_SERVICE_URL: ${PROGRAM_SERVICE_URL}
+      MATERIAL_SERVICE_URL: ${MATERIAL_SERVICE_URL}
+      CONTACT_SERVICE_URL: ${CONTACT_SERVICE_URL}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+    depends_on:
+      - student-service
+      - teacher-service
+      - program-service
+      - material-service
+      - contact-service
+      - auth-service
+      - user-service
+
+  student-service:
+    build:
+      context: .
+      dockerfile: services/student-service/Dockerfile
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - backend_uploads:/app/uploads
+
+  teacher-service:
+    build:
+      context: .
+      dockerfile: services/teacher-service/Dockerfile
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3002
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  program-service:
+    build:
+      context: .
+      dockerfile: services/program-service/Dockerfile
+    restart: always
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3003
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  material-service:
+    build:
+      context: .
+      dockerfile: services/material-service/Dockerfile
+    restart: always
+    ports:
+      - "3004:3004"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3004
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  contact-service:
+    build:
+      context: .
+      dockerfile: services/contact-service/Dockerfile
+    restart: always
+    ports:
+      - "3005:3005"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3005
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    restart: always
+    ports:
+      - "3006:3006"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3006
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    restart: always
+    ports:
+      - "3007:3007"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3007
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:

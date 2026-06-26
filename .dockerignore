@@ -7,3 +7,9 @@ Indra/.cache
 .codex
 npm-debug.log
 *.log
+services/*/node_modules
+services/*/dist
+services/*/package-lock.json
+api-gateway/node_modules
+api-gateway/dist
+api-gateway/package-lock.json
