@@ -101,7 +101,15 @@ const authenticate = async (req: RequestLike, res: ResponseLike, next: NextLike)
 
     const user = (await prisma.user.findUnique({
       where: { id: decoded.id },
-      include: { role: true },
+      select: {
+        id: true,
+        isActive: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
     })) as UserLike | null;
 
     if (!user || !user.isActive) {

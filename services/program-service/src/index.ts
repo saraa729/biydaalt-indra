@@ -13,7 +13,7 @@ app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: "Program Service is running." });
 });
 
-app.use("/programs", programRoutes);
+app.use("/api/programs", programRoutes);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Route not found" });

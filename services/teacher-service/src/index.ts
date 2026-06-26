@@ -13,7 +13,7 @@ app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: "Teacher Service is running." });
 });
 
-app.use("/teachers", teacherRoutes);
+app.use("/api/teachers", teacherRoutes);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Route not found" });

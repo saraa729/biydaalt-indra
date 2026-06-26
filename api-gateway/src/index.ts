@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 import express, { type NextFunction, type Request, type Response } from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
@@ -11,48 +11,67 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: "API Gateway is running." });
 });
+app.use(
+  "/api/teachers",
+  createProxyMiddleware({
+    target: process.env.TEACHER_SERVICE_URL ?? "http://teacher-service:3002",
+    changeOrigin: true,
+  })
+);
 
-// Proxy routes to respective services
-app.use("/teachers", createProxyMiddleware({
-  target: process.env.TEACHER_SERVICE_URL ?? "http://teacher-service:3002",
-  changeOrigin: true,
-}));
+app.use(
+  "/api/students",
+  createProxyMiddleware({
+    target: process.env.STUDENT_SERVICE_URL ?? "http://student-service:3001",
+    changeOrigin: true,
+  })
+);
 
-app.use("/students", createProxyMiddleware({
-  target: process.env.STUDENT_SERVICE_URL ?? "http://student-service:3001",
-  changeOrigin: true,
-}));
+app.use(
+  "/api/programs",
+  createProxyMiddleware({
+    target: process.env.PROGRAM_SERVICE_URL ?? "http://program-service:3003",
+    changeOrigin: true,
+  })
+);
 
-app.use("/programs", createProxyMiddleware({
-  target: process.env.PROGRAM_SERVICE_URL ?? "http://program-service:3003",
-  changeOrigin: true,
-}));
+app.use(
+  "/api/materials",
+  createProxyMiddleware({
+    target: process.env.MATERIAL_SERVICE_URL ?? "http://material-service:3004",
+    changeOrigin: true,
+  })
+);
 
-app.use("/materials", createProxyMiddleware({
-  target: process.env.MATERIAL_SERVICE_URL ?? "http://material-service:3004",
-  changeOrigin: true,
-}));
+app.use(
+  "/api/contacts",
+  createProxyMiddleware({
+    target: process.env.CONTACT_SERVICE_URL ?? "http://contact-service:3005",
+    changeOrigin: true,
+  })
+);
 
-app.use("/api/contacts", createProxyMiddleware({
-  target: process.env.CONTACT_SERVICE_URL ?? "http://contact-service:3005",
-  changeOrigin: true,
-}));
+app.use(
+  "/api/auth",
+  createProxyMiddleware({
+    target: process.env.AUTH_SERVICE_URL ?? "http://auth-service:3006",
+    changeOrigin: true,
+  })
+);
 
-app.use("/api/auth", createProxyMiddleware({
-  target: process.env.AUTH_SERVICE_URL ?? "http://auth-service:3006",
-  changeOrigin: true,
-}));
-
-app.use("/api/users", createProxyMiddleware({
-  target: process.env.USER_SERVICE_URL ?? "http://user-service:3007",
-  changeOrigin: true,
-}));
+app.use(
+  "/api/users",
+  createProxyMiddleware({
+    target: process.env.USER_SERVICE_URL ?? "http://user-service:3007",
+    changeOrigin: true,
+  })
+);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
+app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(error);
   const message = error instanceof Error ? error.message : "Internal server error";
   res.status(500).json({ message });

@@ -13,7 +13,7 @@ app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: "Material Service is running." });
 });
 
-app.use("/materials", materialRoutes);
+app.use("/api/materials", materialRoutes);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Route not found" });
