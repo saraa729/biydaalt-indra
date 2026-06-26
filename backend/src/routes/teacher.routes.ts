@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { teacherController } from '../controllers/teacher.controller.js';
+import { authMiddleware, authorize } from '../middlewares/auth.middleware.js';
+import { ACADEMIC_ROLES } from '../constants/roles.js';
 
 export const teacherRoutes = Router();
 
-teacherRoutes.get('/', teacherController.list);
-teacherRoutes.get('/:id', teacherController.getById);
-teacherRoutes.post('/', teacherController.create);
-teacherRoutes.put('/:id', teacherController.update);
-teacherRoutes.delete('/:id', teacherController.remove);
+teacherRoutes.get('/', authMiddleware, authorize(...ACADEMIC_ROLES), teacherController.list);
+teacherRoutes.get('/:id', authMiddleware, authorize(...ACADEMIC_ROLES), teacherController.getById);
+teacherRoutes.post('/', authMiddleware, authorize(...ACADEMIC_ROLES), teacherController.create);
+teacherRoutes.put('/:id', authMiddleware, authorize(...ACADEMIC_ROLES), teacherController.update);
+teacherRoutes.delete('/:id', authMiddleware, authorize(...ACADEMIC_ROLES), teacherController.remove);

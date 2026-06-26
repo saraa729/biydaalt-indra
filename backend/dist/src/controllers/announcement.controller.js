@@ -1,4 +1,5 @@
 import { announcementService } from "../services/announcement.service.js";
+import { logService } from "../services/log.service.js";
 function handleError(res, error) {
     const message = error instanceof Error ? error.message : "Unexpected error";
     const status = message === "Invalid id" ? 400 : 400;
@@ -60,6 +61,12 @@ export const announcementController = {
                 isPublished: parseBoolean(req.body.isPublished),
                 authorId,
             });
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "ANNOUNCEMENT_CREATED",
+                details: JSON.stringify({ announcementId: announcement.id, title: announcement.title }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(201).json(announcement);
         }
         catch (error) {
@@ -77,6 +84,12 @@ export const announcementController = {
             if (!announcement) {
                 return res.status(404).json({ message: "Announcement not found" });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "ANNOUNCEMENT_UPDATED",
+                details: JSON.stringify({ announcementId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json(announcement);
         }
         catch (error) {
@@ -90,6 +103,12 @@ export const announcementController = {
             if (!deleted) {
                 return res.status(404).json({ message: "Announcement not found" });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "ANNOUNCEMENT_DELETED",
+                details: JSON.stringify({ announcementId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json({ deleted });
         }
         catch (error) {

@@ -1,4 +1,5 @@
 import { authService } from "../services/auth.service.js";
+import { logService } from "../services/log.service.js";
 function handleError(res, error) {
     const message = error instanceof Error ? error.message : "Unexpected error";
     const status = message === "Invalid email or password."
@@ -16,6 +17,12 @@ export const authController = {
     async register(req, res) {
         try {
             const result = await authService.register(req.body);
+            await logService.createSystemLog({
+                userId: result.user.id,
+                action: "AUTH_REGISTER",
+                details: JSON.stringify({ email: result.user.email }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(201).json({ success: true, ...result });
         }
         catch (error) {
@@ -25,6 +32,12 @@ export const authController = {
     async login(req, res) {
         try {
             const result = await authService.login(req.body);
+            await logService.createSystemLog({
+                userId: result.user.id,
+                action: "AUTH_LOGIN",
+                details: JSON.stringify({ email: result.user.email }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(200).json({ success: true, ...result });
         }
         catch (error) {

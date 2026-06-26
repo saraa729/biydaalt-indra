@@ -1,4 +1,5 @@
 import { admissionService, type AdmissionStatusValue } from "../services/admission.service.js";
+import { logService } from "../services/log.service.js";
 
 function handleError(res: any, error: unknown) {
   const message = error instanceof Error ? error.message : "Unexpected error";
@@ -74,6 +75,13 @@ export const admissionController = {
         message: req.body.message,
       });
 
+      await logService.createSystemLog({
+        userId: req.user?.id ?? null,
+        action: "ADMISSION_CREATED",
+        details: JSON.stringify({ admissionId: admission.id, email: admission.email }),
+        ipAddress: req.ip ?? null,
+      });
+
       return res.status(201).json(admission);
     } catch (error) {
       return handleError(res, error);
@@ -100,6 +108,13 @@ export const admissionController = {
         return res.status(404).json({ message: "Admission not found" });
       }
 
+      await logService.createSystemLog({
+        userId: req.user?.id ?? null,
+        action: "ADMISSION_UPDATED",
+        details: JSON.stringify({ admissionId: id, status }),
+        ipAddress: req.ip ?? null,
+      });
+
       return res.json(admission);
     } catch (error) {
       return handleError(res, error);
@@ -114,6 +129,13 @@ export const admissionController = {
       if (!deleted) {
         return res.status(404).json({ message: "Admission not found" });
       }
+
+      await logService.createSystemLog({
+        userId: req.user?.id ?? null,
+        action: "ADMISSION_DELETED",
+        details: JSON.stringify({ admissionId: id }),
+        ipAddress: req.ip ?? null,
+      });
 
       return res.json({ deleted });
     } catch (error) {

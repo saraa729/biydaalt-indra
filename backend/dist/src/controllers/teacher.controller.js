@@ -1,4 +1,5 @@
 import { teacherService } from '../services/teacher.service.js';
+import { logService } from '../services/log.service.js';
 function handleError(res, error) {
     const message = error instanceof Error ? error.message : 'Unexpected error';
     return res.status(400).json({ message });
@@ -33,6 +34,12 @@ export const teacherController = {
     async create(req, res) {
         try {
             const teacher = await teacherService.createTeacher(req.body);
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "TEACHER_CREATED",
+                details: JSON.stringify({ teacherId: teacher.id, email: teacher.email }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(201).json(teacher);
         }
         catch (error) {
@@ -46,6 +53,12 @@ export const teacherController = {
             if (!teacher) {
                 return res.status(404).json({ message: 'Teacher not found' });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "TEACHER_UPDATED",
+                details: JSON.stringify({ teacherId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json(teacher);
         }
         catch (error) {
@@ -59,6 +72,12 @@ export const teacherController = {
             if (!deleted) {
                 return res.status(404).json({ message: 'Teacher not found' });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "TEACHER_DELETED",
+                details: JSON.stringify({ teacherId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json({ deleted });
         }
         catch (error) {

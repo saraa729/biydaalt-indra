@@ -35,6 +35,7 @@ services:
       CONTACT_SERVICE_URL: ${CONTACT_SERVICE_URL}
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
       USER_SERVICE_URL: ${USER_SERVICE_URL}
+      BACKEND_SERVICE_URL: ${BACKEND_SERVICE_URL}
     depends_on:
       - student-service
       - teacher-service
@@ -43,6 +44,24 @@ services:
       - contact-service
       - auth-service
       - user-service
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: always
+    ports:
+      - "3008:3008"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3008
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_DIST_DIR: /app/frontend-dist
+    depends_on:
+      db:
+        condition: service_healthy
 
   student-service:
     build:

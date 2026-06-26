@@ -1,4 +1,5 @@
 import { materialService } from '../services/material.service.js';
+import { logService } from '../services/log.service.js';
 function handleError(res, error) {
     const message = error instanceof Error ? error.message : 'Unexpected error';
     return res.status(400).json({ message });
@@ -37,18 +38,25 @@ export const materialController = {
     async create(req, res) {
         try {
             const uploadedFile = req.file;
+            const uploadedById = req.user?.id ?? parseNumber(req.body.uploadedById);
             const payload = {
                 title: req.body.title,
                 fileUrl: uploadedFile ? `/uploads/${uploadedFile.filename}` : req.body.fileUrl,
                 videoUrl: req.body.videoUrl,
                 fileType: req.body.fileType ?? uploadedFile?.mimetype ?? (uploadedFile ? 'application/pdf' : undefined),
                 classGroupId: parseNumber(req.body.classGroupId),
-                uploadedById: parseNumber(req.body.uploadedById),
+                uploadedById,
             };
             if (uploadedFile && uploadedFile.mimetype !== 'application/pdf') {
                 return res.status(400).json({ message: 'Only PDF uploads are allowed.' });
             }
             const material = await materialService.createMaterial(payload);
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "MATERIAL_CREATED",
+                details: JSON.stringify({ materialId: material.id, title: material.title }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(201).json(material);
         }
         catch (error) {
@@ -74,6 +82,12 @@ export const materialController = {
             if (!material) {
                 return res.status(404).json({ message: 'Material not found' });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "MATERIAL_UPDATED",
+                details: JSON.stringify({ materialId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json(material);
         }
         catch (error) {
@@ -87,6 +101,12 @@ export const materialController = {
             if (!deleted) {
                 return res.status(404).json({ message: 'Material not found' });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "MATERIAL_DELETED",
+                details: JSON.stringify({ materialId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json({ deleted });
         }
         catch (error) {

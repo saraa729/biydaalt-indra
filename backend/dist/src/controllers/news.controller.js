@@ -1,4 +1,5 @@
 import { newsService } from "../services/news.service.js";
+import { logService } from "../services/log.service.js";
 function handleError(res, error) {
     const message = error instanceof Error ? error.message : "Unexpected error";
     const status = message === "Invalid id" ? 400 : 400;
@@ -62,6 +63,12 @@ export const newsController = {
                 isPublished: parseBoolean(req.body.isPublished),
                 authorId,
             });
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "NEWS_CREATED",
+                details: JSON.stringify({ newsId: news.id, title: news.title }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(201).json(news);
         }
         catch (error) {
@@ -80,6 +87,12 @@ export const newsController = {
             if (!news) {
                 return res.status(404).json({ message: "News not found" });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "NEWS_UPDATED",
+                details: JSON.stringify({ newsId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json(news);
         }
         catch (error) {
@@ -93,6 +106,12 @@ export const newsController = {
             if (!deleted) {
                 return res.status(404).json({ message: "News not found" });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "NEWS_DELETED",
+                details: JSON.stringify({ newsId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json({ deleted });
         }
         catch (error) {

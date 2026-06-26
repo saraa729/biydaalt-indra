@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { gradeController } from "../controllers/grade.controller.js";
+import { authMiddleware, authorize } from "../middlewares/auth.middleware.js";
+import { MANAGEMENT_ROLES, TEACHING_ROLES } from "../constants/roles.js";
+export const gradeRoutes = Router();
+gradeRoutes.get("/me", authMiddleware, authorize("STUDENT"), gradeController.myGrades);
+gradeRoutes.get("/", authMiddleware, authorize(...TEACHING_ROLES), gradeController.list);
+gradeRoutes.get("/:id", authMiddleware, authorize(...TEACHING_ROLES), gradeController.getById);
+gradeRoutes.post("/", authMiddleware, authorize(...TEACHING_ROLES), gradeController.create);
+gradeRoutes.put("/:id", authMiddleware, authorize(...TEACHING_ROLES), gradeController.update);
+gradeRoutes.delete("/:id", authMiddleware, authorize(...MANAGEMENT_ROLES), gradeController.remove);
+export default gradeRoutes;

@@ -1,4 +1,5 @@
 import { studentService } from '../services/student.service.js';
+import { logService } from '../services/log.service.js';
 function handleError(res, error) {
     const message = error instanceof Error ? error.message : 'Unexpected error';
     return res.status(400).json({ message });
@@ -33,6 +34,12 @@ export const studentController = {
     async create(req, res) {
         try {
             const student = await studentService.createStudent(req.body);
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "STUDENT_CREATED",
+                details: JSON.stringify({ studentId: student.id, email: student.email }),
+                ipAddress: req.ip ?? null,
+            });
             return res.status(201).json(student);
         }
         catch (error) {
@@ -46,6 +53,12 @@ export const studentController = {
             if (!student) {
                 return res.status(404).json({ message: 'Student not found' });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "STUDENT_UPDATED",
+                details: JSON.stringify({ studentId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json(student);
         }
         catch (error) {
@@ -59,6 +72,12 @@ export const studentController = {
             if (!deleted) {
                 return res.status(404).json({ message: 'Student not found' });
             }
+            await logService.createSystemLog({
+                userId: req.user?.id ?? null,
+                action: "STUDENT_DELETED",
+                details: JSON.stringify({ studentId: id }),
+                ipAddress: req.ip ?? null,
+            });
             return res.json({ deleted });
         }
         catch (error) {

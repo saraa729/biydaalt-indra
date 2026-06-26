@@ -60,6 +60,70 @@ app.use(
 );
 
 app.use(
+  "/api/admissions",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/news",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/announcements",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/attendance",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/grades",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/dashboard",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/logs",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
+  "/api/backups",
+  createProxyMiddleware({
+    target: process.env.BACKEND_SERVICE_URL ?? "http://backend:3008",
+    changeOrigin: true,
+  })
+);
+
+app.use(
   "/api/users",
   createProxyMiddleware({
     target: process.env.USER_SERVICE_URL ?? "http://user-service:3007",
