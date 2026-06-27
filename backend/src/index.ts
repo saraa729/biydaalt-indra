@@ -24,7 +24,7 @@ import { backupService } from "./services/backup.service.js";
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
 const frontendDistDir =
-  process.env.FRONTEND_DIST_DIR ?? path.resolve(process.cwd(), "../Indra/dist");
+  process.env.FRONTEND_DIST_DIR ?? path.resolve(process.cwd(), "../Front/dist");
 const frontendIndexPath = path.join(frontendDistDir, "index.html");
 
 app.use(express.json({ limit: "10mb" }));

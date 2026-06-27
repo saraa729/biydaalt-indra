@@ -8,7 +8,7 @@ COPY backend/package.json ./
 RUN npm install
 
 COPY backend/. ./
-COPY Indra/dist ./frontend-dist
+COPY Front/dist ./frontend-dist
 
 RUN npx prisma generate
 RUN ./node_modules/.bin/tsc -p tsconfig.json
