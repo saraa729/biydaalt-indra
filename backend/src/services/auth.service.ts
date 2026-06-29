@@ -124,14 +124,12 @@ async function findUserByEmail(email: string) {
 }
 
 async function getStudentRoleId() {
-  const role = await prisma.role.findUnique({
+  const role = await prisma.role.upsert({
     where: { name: "STUDENT" },
+    update: {},
+    create: { name: "STUDENT" },
     select: { id: true },
   });
-
-  if (!role) {
-    throw new Error("STUDENT role is missing from the database. Run the seed script first.");
-  }
 
   return role.id;
 }
