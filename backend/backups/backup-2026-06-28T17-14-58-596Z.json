@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "generatedAt": "2026-06-28T17:14:44.809Z",
+    "reason": "scheduled",
+    "triggeredById": null
+  },
+  "roles": [
+    {
+      "id": 1,
+      "name": "SUPER_ADMIN"
+    },
+    {
+      "id": 2,
+      "name": "OWNER"
+    },
+    {
+      "id": 3,
+      "name": "DIRECTOR"
+    },
+    {
+      "id": 4,
+      "name": "ACADEMIC_OFFICE"
+    },
+    {
+      "id": 5,
+      "name": "MODERATOR"
+    },
+    {
+      "id": 6,
+      "name": "TEACHER"
+    },
+    {
+      "id": 7,
+      "name": "STUDENT"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@indracyber.mn",
+      "password": "$2b$10$a.tU6eO1vXvpJQf.rwoQa.wwyhl8N0tlDMVBD8H6J6Eki24N3yn4G",
+      "firstName": "Super",
+      "lastName": "Admin",
+      "phone": null,
+      "avatarUrl": null,
+      "isActive": true,
+      "roleId": 1,
+      "createdAt": "2026-06-27T15:30:39.297Z",
+      "updatedAt": "2026-06-27T15:30:39.297Z"
+    },
+    {
+      "id": 2,
+      "email": "tergll976@gmail.com",
+      "password": "$2b$10$4agRSQEoCvsYfylZJDfBquAR3A2NRcUA3xqsh9THGK8qDAeWMRmTS",
+      "firstName": "enhee",
+      "lastName": "eba",
+      "phone": "95128805",
+      "avatarUrl": null,
+      "isActive": true,
+      "roleId": 7,
+      "createdAt": "2026-06-27T16:19:09.790Z",
+      "updatedAt": "2026-06-27T16:19:09.790Z"
+    }
+  ],
+  "programs": [
+    {
+      "id": 1,
+      "name": "Software Engineering",
+      "description": "Программ хангамжийн инженерчлэл",
+      "isActive": true,
+      "createdAt": "2026-06-27T15:30:39.362Z",
+      "updatedAt": "2026-06-27T15:30:39.362Z"
+    },
+    {
+      "id": 2,
+      "name": "Graphic Design",
+      "description": "График дизайн",
+      "isActive": true,
+      "createdAt": "2026-06-27T15:30:39.429Z",
+      "updatedAt": "2026-06-27T15:30:39.429Z"
+    },
+    {
+      "id": 3,
+      "name": "Digital Marketing",
+      "description": "Дижитал маркетинг",
+      "isActive": true,
+      "createdAt": "2026-06-27T15:30:39.495Z",
+      "updatedAt": "2026-06-27T15:30:39.495Z"
+    }
+  ],
+  "classGroups": [],
+  "schedules": [],
+  "enrollments": [],
+  "attendances": [],
+  "grades": [],
+  "materials": [],
+  "news": [],
+  "announcements": [],
+  "admissionRequests": [],
+  "contactMessages": [],
+  "systemLogs": [
+    {
+      "id": 1,
+      "userId": 2,
+      "action": "AUTH_REGISTER",
+      "details": "{\"email\":\"tergll976@gmail.com\"}",
+      "ipAddress": "::1",
+      "createdAt": "2026-06-27T16:19:10.412Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "action": "AUTH_LOGIN",
+      "details": "{\"email\":\"tergll976@gmail.com\"}",
+      "ipAddress": "::1",
+      "createdAt": "2026-06-27T16:21:46.818Z"
+    }
+  ]
+}

@@ -20,6 +20,15 @@ const News: React.FC<NewsProps> = ({
   removeNews, 
   setSelectedNews 
 }) => {
+  // Helper to format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('mn-MN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <section id="news" className="py-24 px-4 sm:px-6 lg:px-12 bg-[#05070F]/50">
       <div className="max-w-8xl mx-auto">
@@ -37,20 +46,22 @@ const News: React.FC<NewsProps> = ({
                   <label className="block text-sm font-semibold text-gray-400 mb-2">Зургийн URL</label>
                   <input 
                     type="text" 
-                    value={newNewsItem.image}
-                    onChange={(e) => setNewNewsItem({...newNewsItem, image: e.target.value})}
+                    value={newNewsItem.imageUrl || ''}
+                    onChange={(e) => setNewNewsItem({...newNewsItem, imageUrl: e.target.value})}
                     placeholder="https://..."
                     className="w-full px-4 py-2 bg-[#05070F] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-400 mb-2">Огноо</label>
-                  <input 
-                    type="text" 
-                    value={newNewsItem.date}
-                    onChange={(e) => setNewNewsItem({...newNewsItem, date: e.target.value})}
+                  <label className="block text-sm font-semibold text-gray-400 mb-2">Нийтлэх</label>
+                  <select 
+                    value={newNewsItem.isPublished ? 'true' : 'false'}
+                    onChange={(e) => setNewNewsItem({...newNewsItem, isPublished: e.target.value === 'true'})}
                     className="w-full px-4 py-2 bg-[#05070F] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                  />
+                  >
+                    <option value="false">Үгүй</option>
+                    <option value="true">Тийм</option>
+                  </select>
                 </div>
               </div>
               <div>
@@ -61,17 +72,6 @@ const News: React.FC<NewsProps> = ({
                   onChange={(e) => setNewNewsItem({...newNewsItem, title: e.target.value})}
                   placeholder="Мэдээний гарчиг..."
                   className="w-full px-4 py-2 bg-[#05070F] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-400 mb-2">Товч Тайлбар</label>
-                <textarea 
-                  value={newNewsItem.excerpt}
-                  onChange={(e) => setNewNewsItem({...newNewsItem, excerpt: e.target.value})}
-                  placeholder="Товч тайлбар..."
-                  rows={2}
-                  className="w-full px-4 py-2 bg-[#05070F] border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none resize-y"
                   required
                 />
               </div>
@@ -109,16 +109,16 @@ const News: React.FC<NewsProps> = ({
               )}
               <div className="relative h-64 overflow-hidden">
                 <img 
-                  src={item.image} 
+                  src={item.imageUrl || 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80'} 
                   alt={item.title} 
                   className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E17] to-transparent"></div>
               </div>
               <div className="p-8">
-                <span className="text-xs font-mono text-blue-400 uppercase tracking-wider">{item.date}</span>
+                <span className="text-xs font-mono text-blue-400 uppercase tracking-wider">{formatDate(item.createdAt)}</span>
                 <h3 className="text-xl font-bold text-white mt-3 mb-3">{item.title}</h3>
-                <p className="text-[#9CA3AF] text-sm mb-6 leading-relaxed">{item.excerpt}</p>
+                <p className="text-[#9CA3AF] text-sm mb-6 leading-relaxed">{item.content.substring(0, 100)}...</p>
                 <button 
                   onClick={() => setSelectedNews(item)}
                   className="text-blue-400 text-sm font-semibold flex items-center gap-2 group-hover:text-blue-300 transition hover:scale-105"

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -83,7 +83,7 @@ model Role {
 model Program {
   id          Int      @id @default(autoincrement())
   name        String   @unique 
-  description String?  @db.Text
+  description String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -175,7 +175,7 @@ model Grade {
   title        String
   score        Float
   maxScore     Float      @default(100)
-  comment      String?    @db.Text
+  comment      String?
   createdAt    DateTime   @default(now())
 
   @@map("grades")
@@ -207,7 +207,7 @@ model Material {
 model News {
   id          Int      @id @default(autoincrement())
   title       String
-  content     String   @db.Text
+  content     String
   imageUrl    String?
   isPublished Boolean  @default(false)
   authorId    Int
@@ -225,7 +225,7 @@ model News {
 model Announcement {
   id          Int      @id @default(autoincrement())
   title       String
-  content     String   @db.Text
+  content     String
   isPublished Boolean  @default(false)
   authorId    Int
   author      User     @relation(fields: [authorId], references: [id])
@@ -247,7 +247,7 @@ model AdmissionRequest {
   phone       String
   programId   Int
   program     Program         @relation(fields: [programId], references: [id])
-  message     String?         @db.Text
+  message     String?
   status      AdmissionStatus @default(PENDING)
   reviewedById Int?
   reviewedBy   User?          @relation("ReviewedBy", fields: [reviewedById], references: [id])
@@ -266,7 +266,7 @@ model ContactMessage {
   name       String
   email      String
   subject    String?
-  message    String   @db.Text
+  message    String
   isReplied  Boolean  @default(false)
   repliedById Int?
   repliedBy   User?   @relation("RepliedBy", fields: [repliedById], references: [id])
@@ -284,7 +284,7 @@ model SystemLog {
   userId    Int?
   user      User?    @relation(fields: [userId], references: [id])
   action    String
-  details   String?  @db.Text
+  details   String?
   ipAddress String?
   createdAt DateTime @default(now())
 

@@ -1,35 +1,20 @@
 FROM node:20-alpine AS builder
-
-WORKDIR /app/backend
-
-ENV DATABASE_URL="mysql://prisma:prisma123@db:3306/indra_biedaalt"
-
-COPY backend/package.json ./
+WORKDIR /app
+COPY package.json ./
 RUN npm install
-
-COPY backend/. ./
-COPY Front/dist ./frontend-dist
-
+COPY . .
 RUN npx prisma generate
 RUN ./node_modules/.bin/tsc -p tsconfig.json
 
 FROM node:20-alpine AS runner
-
-WORKDIR /app/backend
-
+WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV FRONTEND_DIST_DIR=/app/frontend-dist
-
-COPY --from=builder /app/backend/package*.json ./
-COPY --from=builder /app/backend/node_modules ./node_modules
-COPY --from=builder /app/backend/dist ./dist
-COPY --from=builder /app/backend/prisma ./prisma
-COPY --from=builder /app/backend/docker-entrypoint.sh ./docker-entrypoint.sh
-COPY --from=builder /app/backend/frontend-dist /app/frontend-dist
-
-RUN chmod +x /app/backend/docker-entrypoint.sh
-
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 EXPOSE 3000
-
-ENTRYPOINT ["/app/backend/docker-entrypoint.sh"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

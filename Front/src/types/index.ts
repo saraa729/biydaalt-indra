@@ -26,10 +26,12 @@ export interface Announcement {
 export interface NewsArticle {
   id: number;
   title: string;
-  date: string;
-  image: string;
-  excerpt: string;
   content: string;
+  imageUrl?: string | null;
+  isPublished?: boolean;
+  authorId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Define the form state types
@@ -50,8 +52,7 @@ export type NewAnnouncement = {
 
 export type NewNewsArticle = {
   title: string;
-  date: string;
-  image: string;
-  excerpt: string;
   content: string;
+  imageUrl?: string;
+  isPublished?: boolean;
 };
